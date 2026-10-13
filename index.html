@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồng bộ dữ liệu Google Sheet lên Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            text-align: center;
+            padding-top: 80px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: inline-block;
+            min-width: 350px;
+        }
+        h2 { color: #333; margin-bottom: 25px; }
+        button {
+            background-color: #2e7d32;
+            color: white;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #1b5e20; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status {
+            margin-top: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Quản lý đồng bộ tài khoản</h2>
+        <!-- Nút bấm đồng bộ -->
+        <button id="syncBtn" onclick="syncDataToSupabase()">Cập nhật dữ liệu lên Supabase</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function syncDataToSupabase() {
+            const btn = document.getElementById('syncBtn');
+            const statusDiv = document.getElementById('status');
+            
+            // Khóa nút và đổi trạng thái khi đang chạy
+            btn.disabled = true;
+            btn.innerText = "Đang đồng bộ...";
+            statusDiv.innerText = "Đang xóa dữ liệu cũ và nạp dữ liệu mới, vui lòng chờ...";
+            statusDiv.style.color = "orange";
+
+            // Thay thế link bên dưới bằng đường link Web App chính xác của bạn
+            const webAppUrl = "https://script.google.com/macros/s/AKfycbygDchbQFzJcVWyledkQbpDV5drykxi0152IfeVTUfSIF7rqChJHI0YIPhILcelk/exec";
+
+            fetch(webAppUrl, {
+                method: "POST",
+                mode: "no-cors" // Cần thiết để gọi Google Apps Script từ tên miền khác
+            })
+            .then(() => {
+                statusDiv.innerText = "Đã gửi lệnh cập nhật thành công! Hãy kiểm tra lại Supabase.";
+                statusDiv.style.color = "green";
+                btn.disabled = false;
+                btn.innerText = "Cập nhật dữ liệu lên Supabase";
+            })
+            .catch(error => {
+                statusDiv.innerText = "Lỗi kết nối: " + error;
+                statusDiv.style.color = "red";
+                btn.disabled = false;
+                btn.innerText = "Cập nhật dữ liệu lên Supabase";
+            });
+        }
+    </script>
+
+</body>
+</html>
